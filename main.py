@@ -1,0 +1,274 @@
+from asyncio.windows_events import NULL
+from contextlib import nullcontext
+from ftplib import parse150
+import signal
+from django.shortcuts import render
+import requests
+from bs4 import BeautifulSoup
+
+global signal_news
+signal_news = ""
+
+
+class Data:
+    def load_data(self,csv_path):
+        import pandas as pd
+        global df_final
+        df_final = pd.read_csv(csv_path)
+   
+    def data_preprocessing(self,drop_list):
+        from sklearn.model_selection import train_test_split
+        from sklearn.preprocessing import StandardScaler
+
+        # Data pre-processing
+        X = df_final.drop(drop_list,axis=1).values
+        y = df_final['Action'].values
+
+        # Split Train And Test Data
+        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.3)
+
+        # Scale And Standard Variables
+        global sc
+        sc = StandardScaler()
+        X_train = sc.fit_transform(X_train)
+        X_test = sc.transform(X_test)
+
+    def load_model(self,path_json,path_h5):
+        global loaded_model
+        from keras.models import model_from_json
+        # load json and create model
+        json_file = open(path_json, 'r')
+        loaded_model_json = json_file.read()
+        json_file.close()
+        loaded_model = model_from_json(loaded_model_json)
+        # load weights into new model
+        loaded_model.load_weights(path_h5)
+    
+    def live_data(self,urn,api_key):
+        global price,change,open_price,high_price,low_price
+
+        # get stream live data
+        url = urn
+        headers = {'x-access-token': api_key}
+        resp = requests.get(url, headers=headers)
+        resp_dict = resp.json()
+
+        price = resp_dict.get('price')
+        price = float(price)
+        self.price = price
+
+        change = resp_dict.get('ch')
+        change = float(change)
+        self.change = change
+
+        open_price = resp_dict.get('open_price')
+        open_price = float(open_price)
+        self.open_price = open_price
+
+        high_price = resp_dict.get('high_price')
+        high_price = float(high_price)
+        self.high_price = high_price
+
+        low_price = resp_dict.get('low_price')
+        low_price = float(low_price)
+        self.low_price = low_price
+
+
+
+    def get_prices(self):
+          pass
+
+    
+    def pred(self):
+        global pred,signal_data,buy_counter,sell_counter
+        import numpy as np
+        new_pred = loaded_model.predict(sc.transform(np.array([[]])))
+        pred = new_pred
+        new_pred = (new_pred > 0.5)
+
+        sell_counter = 0
+        buy_counter = 0
+
+        if (new_pred):
+            buy_counter = buy_counter + 1
+            self.signal_data = "Buy"
+        else:
+            sell_counter = sell_counter + 1
+            self.signal_data = "Sell"
+
+class News:
+    global s,count_positive,count_neutral,count_negative,urls,pn,sell_counter,pns,percent_negative,percent_positive
+    percent_positive = 0
+    percent_negative = 0
+    pns = ""
+    
+    from datetime import datetime
+
+    # get day
+    today = datetime.now()
+    day = today.strftime("%d")
+
+    day = str(day)
+    datet = str(today.year)
+    datem = str(today.month)
+    timeh = str(today.hour)
+    timem = str(today.minute)
+
+ 
+
+    def KeySearch(self,key):
+        global urls
+        # get news and tweet
+        urls = [
+        'https://gerdoo.me/search/?query='+key+'%20twitter%20buy%20sell&page=5&date=day',
+        'https://gerdoo.me/search/?query='+key+'%20twitter%20buy%20sell&page=4&date=day',
+        'https://gerdoo.me/search/?query='+key+'%20twitter%20buy%20sell&page=3&date=day',
+        'https://gerdoo.me/search/?query='+key+'%20twitter%20buy%20sell&page=2&date=day',
+        'https://gerdoo.me/search/?query='+key+'%20twitter%20buy%20sell&page=1&date=day',
+        'https://gerdoo.me/search/?query='+key+'%20twitter%20analysis&page=5&date=day',
+        'https://gerdoo.me/search/?query='+key+'%20twitter%20analysis&page=4&date=day',
+        'https://gerdoo.me/search/?query='+key+'%20twitter%20analysis&page=3&date=day',
+        'https://gerdoo.me/search/?query='+key+'%20twitter%20analysis&page=2&date=day',
+        'https://gerdoo.me/search/?query='+key+'%20twitter%20analysis&page=1&date=day',
+        'https://gerdoo.me/search/?query=political%20news&page=5&date=day',
+        'https://gerdoo.me/search/?query=political%20news&page=4&date=day',
+        'https://gerdoo.me/search/?query=political%20news&page=3&date=day',
+        'https://gerdoo.me/search/?query=political%20news&page=2&date=day',
+        'https://gerdoo.me/search/?query=political%20news&page=1&date=day',
+        'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=5&date=day',
+        'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=4&date=day',
+        'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=3&date=day',
+        'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=2&date=day',
+        'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=1&date=day',
+        ]
+
+        from nltk.corpus import stopwords
+        global stop_words
+        stop_words = set(stopwords.words('english'))
+    
+    def ProcessNews(self):
+        global pn,pns,signal_news
+        from nltk.tokenize import word_tokenize
+        from nltk.stem import WordNetLemmatizer
+        from textblob import TextBlob
+
+        for url in urls:
+            response = requests.get(url)
+            soup = BeautifulSoup(response.content, 'html.parser')
+            headlines = soup.find_all('span', class_='highlight-text')
+            for headline in headlines:
+                headline = str(headline)
+
+                word_tokens = word_tokenize(headline)
+                filtered_sentence = [w for w in word_tokens if not w.lower() in stop_words]
+                filtered_sentence = []
+                        
+                for w in word_tokens:
+                    if w not in stop_words:
+                        filtered_sentence.append(w)
+                        
+                    lemma_word = []
+                    wordnet_lemmatizer = WordNetLemmatizer()
+                    for w in filtered_sentence:
+                        word1 = wordnet_lemmatizer.lemmatize(w, pos = "n")
+                        word2 = wordnet_lemmatizer.lemmatize(word1, pos = "v")
+                        word3 = wordnet_lemmatizer.lemmatize(word2, pos = ("a"))
+                        lemma_word.append(word3)
+                
+                s = filtered_sentence
+            
+                tweet = s
+                tweet = str(tweet)
+                tweet = BeautifulSoup(tweet, "lxml").text
+
+                # create TextBlob object of passed tweet text 
+                import re 
+                analysis = TextBlob(' '.join(re.sub("(@[A-Za-z0-9]+)|([^0-9A-Za-z \t])|(\w+:\/\/\S+)", " ", tweet).split())) 
+                
+                count_negative = 0
+                count_positive = 0
+                count_neutral = 0
+
+                # set sentiment 
+                if(analysis.sentiment.polarity > 0): 
+                    count_positive = count_positive + 1
+                elif(analysis.sentiment.polarity == 0): 
+                    count_neutral = count_neutral + 1
+                elif(analysis.sentiment.polarity < 0): 
+                    count_negative = count_negative + 1
+
+        try:
+            count_all = count_positive + count_negative
+            percent_positive = (count_positive * 100 / count_all) - 25
+            percent_negative = (count_negative * 100 / count_all) + 25
+        except:
+            count_all = 0
+            percent_positive = 0
+            percent_negative = 0
+
+        buy_counter = 0
+        sell_counter = 0
+
+        if(percent_positive > 60):
+            buy_counter = buy_counter + 1
+            pn = 1
+            pns = "Buy"
+            self.signal_news = "Buy"
+        elif(percent_negative > 60):
+            sell_counter = sell_counter + 1
+            pn = -1
+            pns = "Sell"
+            self.signal_news = "Sell"
+        else:
+            pn = 0
+            pns = "Neutral"
+            self.signal_news = "Neutral"
+
+class Final_Calc:
+    global data_class
+    data_class = Data()
+    def Final(self):
+        global final_signal
+        if(buy_counter > 2):
+            self.final_signal = "Buy"
+        elif(sell_counter > 2):
+            self.final_signal = "Sell"
+
+
+def pred_gold():
+    global gold,gold_news,gold_final
+    gold = Data()
+    gold_news = News()
+    gold_final = Final_Calc()
+
+    # load gold data
+    gold.load_data('uploads/model/gold/data.csv')
+
+    # drop not needed features from cvs file list
+    gold.drop_list = ['Date','Action','Change','Open','High','Low','Close']
+    gold.data_preprocessing(gold.drop_list)
+
+    # load gold model and weight of model
+    gold.load_model('model/model-1/model.json','model/model-1/model.json')
+
+    # get live stream gold data from goldapi.io
+    gold.live_data('http://www.goldapi.io/api/XAU/USD','goldapi-19j4clrlk5p94q2-io')
+
+    # get gold prices from database
+    gold.get_prices()
+
+    # prediction
+    gold.pred()
+
+    # search in search engine
+    gold_news.KeySearch('xauusd')
+
+    # process news
+    gold_news.ProcessNews()
+
+    #compire news with data
+    gold_final.Final()
+
+#Run
+pred_gold()
+
