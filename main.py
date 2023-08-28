@@ -13,6 +13,8 @@ from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from textblob import TextBlob
 from nltk.corpus import stopwords
+import os
+import datatime form datatime
 
 global signal_news
 signal_news = ""
@@ -127,35 +129,15 @@ class News:
     percent_positive = 0
     percent_negative = 0
     pns = ""
-    
-    from datetime import datetime
 
-    # get day
-    today = datetime.now()
-    day = today.strftime("%d")
-
-    day = str(day)
-    datet = str(today.year)
-    datem = str(today.month)
-    timeh = str(today.hour)
-    timem = str(today.minute)
-
- 
-
-    def KeySearch(self,key,urls):
-
-
-
-        global stop_words
+    def ProcessNews(self,urls,element,class_element):
+        global pn,pns,signal_news,stop_words
         stop_words = set(stopwords.words('english'))
-    
-    def ProcessNews(self):
-        global pn,pns,signal_news
 
         for url in urls:
             response = requests.get(url)
             soup = BeautifulSoup(response.content, 'html.parser')
-            headlines = soup.find_all('span', class_='highlight-text')
+            headlines = soup.find_all(element, class_ = class_element)
             for headline in headlines:
                 headline = str(headline)
 
@@ -234,6 +216,82 @@ class Final_Calc:
         elif(sell_counter > 2):
             self.final_signal = "Sell"
 
+    def save_singal():
+        # get day
+        today = datetime.now()
+        day = today.strftime("%d")
+
+        day = str(day)
+        datet = str(today.year)
+        datem = str(today.month)
+        timeh = str(today.hour)
+        timem = str(today.minute)
+        # Save in text file
+
+        # Directory
+        directory = day+"-"+datem+"-"+datet
+        
+        # Parent Directory path
+        parent_dir = "date"
+        
+        # Path
+        path = os.path.join(parent_dir, directory)
+
+        if(os.path.isdir(path)): 
+            a = 1
+        else:
+            os.mkdir(path)
+
+        new_path = timeh + "-" + timem + ".txt"
+        pred = open("date/"+directory+"/"+new_path,'w')
+        txt = 'Data: ' + signal_data + '\nNews: ' + signal_news + '\nAll: ' + signal
+        pred.write(txt)
+    
+    def draw_table():
+        if(signal_news == 'Sell' or signal_news == 'Buy'):
+	        sp = "          "
+        else:
+	        sp = "       "
+
+        print("")
+        print("")
+        print("")
+        print("")
+        print("")
+        print("")
+        print("")
+        print("")
+
+        print("      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓      ")
+        print("      ▓                                                                                                              ▓      ")
+        print("      ▓                                XAUUSD (Gold Price in US Dollars) Prediction                                  ▓      ")
+        print("      ▓                                                                                                              ▓      ")
+
+        print("      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓      ")
+
+        print("")
+        print("        Open	      High	    Low	        Price          Change      	 Data	        News           Final   ")
+
+        print("      ────────────────────────────────────────────────────────────────────────────────────────────────────────────────      ")
+        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",close_price,"      ",change,"  	        ",signal_data,"	       ",signal_news,sp,signal,"    ")
+        print("")
+        print("      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓      ")
+
+        print("")
+        print("")
+        print("")
+        print("")
+        print("")
+        print("")
+        print("")
+        print("")      
+
+        # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # ---------------------------------------------------------------------------End Code----------------------------------------------------------------------------------
+        # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+        # ---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 
 def pred_gold():
     global gold,gold_news,gold_final,gold_news_1,gold_news_2,gold1,gold2,gold3
@@ -289,15 +347,33 @@ def pred_gold():
     'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=3&date=day',
     'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=2&date=day',
     'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=1&date=day',
+    'https://gerdoo.me/search/?query=political%20news&page=5&date=day',
+    'https://gerdoo.me/search/?query=political%20news&page=4&date=day',
+    'https://gerdoo.me/search/?query=political%20news&page=3&date=day',
+    'https://gerdoo.me/search/?query=political%20news&page=2&date=day',
+    'https://gerdoo.me/search/?query=political%20news&page=1&date=day',
+    'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=5&date=day',
+    'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=4&date=day',
+    'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=3&date=day',
+    'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=2&date=day',
+    'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=1&date=day',
     ]
 
-    gold_news_1.KeySearch('xauusd',urls1)
 
-    # process news
-    gold_news.ProcessNews()
+    # process news 1
+    gold_news_1.ProcessNews(urls1,'span','highlight-text')
+
+    # url2
+    urls2 = [
+    'https://www.tradingview.com/symbols/XAUUSD/news/?exchange=FX'
+    ]
+
+    gold_news_2.ProcessNews(urls2,'span','title-rY32JioV')
 
     #compire news with data
     gold_final.Final()
+    gold_final.save_singal()
+    gold_final.draw_table()
 
 #Run
 pred_gold()
