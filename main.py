@@ -2,24 +2,28 @@ from asyncio.windows_events import NULL
 from contextlib import nullcontext
 from ftplib import parse150
 import json
-from django.shortcuts import render
 import requests
 from bs4 import BeautifulSoup
+import numpy as np
+import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import StandardScaler
+from keras.models import model_from_json
+from nltk.tokenize import word_tokenize
+from nltk.stem import WordNetLemmatizer
+from textblob import TextBlob
+
+
 
 global signal_news
 signal_news = ""
 
-
 class Data:
     def load_data(self,csv_path):
-        import pandas as pd
         global df_final
         df_final = pd.read_csv(csv_path)
    
     def data_preprocessing(self,drop_list):
-        from sklearn.model_selection import train_test_split
-        from sklearn.preprocessing import StandardScaler
-
         # Data pre-processing
         X = df_final.drop(drop_list,axis=1).values
         y = df_final['Action'].values
@@ -35,7 +39,6 @@ class Data:
 
     def load_model(self,path_json,path_h5):
         global loaded_model
-        from keras.models import model_from_json
         # load json and create model
         json_file = open(path_json, 'r')
         loaded_model_json = json_file.read()
@@ -76,6 +79,7 @@ class Data:
 
 
     def get_prices(self):
+        global prev_open,prev_high,prev_low,prev_close,prev_change,prev_high_low,prev_close_high,prev_sum_4_price,prev_volume,prev_high_open,prev_open_low
         # load prev prices value
         # read file
         with open('price.json', 'r') as myfile:
@@ -103,12 +107,9 @@ class Data:
         #for only data3
         prev_open_low = prev_open - prev_low
 
-
-    
-    def pred(self):
+    def pred(self,fo):
         global pred,signal_data,buy_counter,sell_counter
-        import numpy as np
-        new_pred = loaded_model.predict(sc.transform(np.array([[]])))
+        new_pred = loaded_model.predict(sc.transform(np.array([[prev_open,prev_high,prev_low,prev_close,prev_change,prev_high_low,prev_close_high,prev_sum_4_price,fo]])))
         pred = new_pred
         new_pred = (new_pred > 0.5)
 
@@ -174,9 +175,6 @@ class News:
     
     def ProcessNews(self):
         global pn,pns,signal_news
-        from nltk.tokenize import word_tokenize
-        from nltk.stem import WordNetLemmatizer
-        from textblob import TextBlob
 
         for url in urls:
             response = requests.get(url)
@@ -292,8 +290,10 @@ def pred_gold():
     # get live stream gold data from goldapi.io
     gold.live_data('http://www.goldapi.io/api/XAU/USD','goldapi-19j4clrlk5p94q2-io')
 
-    # get gold prices from database
-    gold.get_prices()
+    # get gold prices from json file
+    gold1.get_prices(prev_volume)
+    gold2.get_prices(prev_high_open)
+    gold3.get_prices(prev_open_low)
 
     # prediction
     gold.pred()
