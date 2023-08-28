@@ -1,7 +1,7 @@
 from asyncio.windows_events import NULL
 from contextlib import nullcontext
 from ftplib import parse150
-import signal
+import json
 from django.shortcuts import render
 import requests
 from bs4 import BeautifulSoup
@@ -76,7 +76,33 @@ class Data:
 
 
     def get_prices(self):
-          pass
+        # load prev prices value
+        # read file
+        with open('price.json', 'r') as myfile:
+            data = myfile.read()
+
+        # parse file
+        y = json.loads(data)
+
+        #for all data
+        prev_open = y["p_open"]
+        prev_high = y["p_high"]
+        prev_low = y["p_low"]
+        prev_close = y["p_close"]
+        prev_change = y["p_change"]
+        prev_high_low = prev_high - prev_low
+        prev_close_high = prev_close - prev_high
+        prev_sum_4_price = prev_open + prev_high + prev_low + prev_close
+
+        #for only data1
+        prev_volume = y["p_volume"]
+
+        #for only data2
+        prev_high_open = prev_high - prev_open
+
+        #for only data3
+        prev_open_low = prev_open - prev_low
+
 
     
     def pred(self):
@@ -238,18 +264,30 @@ class Final_Calc:
 def pred_gold():
     global gold,gold_news,gold_final
     gold = Data()
+    gold1 = Data()
+    gold2 = Data()
+    gold3 = Data()
     gold_news = News()
     gold_final = Final_Calc()
 
-    # load gold data
-    gold.load_data('uploads/model/gold/data.csv')
+    # load gold datas
+    gold1.load_data('data/1/data.csv')
+    gold2.load_data('data/2/data.csv')
+    gold3.load_data('data/3/data.csv')
 
     # drop not needed features from cvs file list
-    gold.drop_list = ['Date','Action','Change','Open','High','Low','Close']
-    gold.data_preprocessing(gold.drop_list)
+    gold1.drop_list = ['Date','Action','Change','Open','High','Low','Close']
+    gold1.data_preprocessing(gold1.drop_list)
+
+    gold2.data_preprocessing(gold1.drop_list)
+
+    gold3.drop_list = ['Date','Action','Change','Open','High','Low','Close','Volume']
+    gold3.data_preprocessing(gold3.drop_list)
 
     # load gold model and weight of model
-    gold.load_model('model/model-1/model.json','model/model-1/model.json')
+    gold1.load_model('model/model-1/model.json','model/model-1/model.json')
+    gold2.load_model('model/model-2/model.json','model/model-2/model.json')
+    gold3.load_model('model/model-3/model.json','model/model-3/model.json')
 
     # get live stream gold data from goldapi.io
     gold.live_data('http://www.goldapi.io/api/XAU/USD','goldapi-19j4clrlk5p94q2-io')
