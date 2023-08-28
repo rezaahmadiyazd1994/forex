@@ -12,8 +12,7 @@ from keras.models import model_from_json
 from nltk.tokenize import word_tokenize
 from nltk.stem import WordNetLemmatizer
 from textblob import TextBlob
-
-
+from nltk.corpus import stopwords
 
 global signal_news
 signal_news = ""
@@ -143,33 +142,10 @@ class News:
 
  
 
-    def KeySearch(self,key):
-        global urls
-        # get news and tweet
-        urls = [
-        'https://gerdoo.me/search/?query='+key+'%20twitter%20buy%20sell&page=5&date=day',
-        'https://gerdoo.me/search/?query='+key+'%20twitter%20buy%20sell&page=4&date=day',
-        'https://gerdoo.me/search/?query='+key+'%20twitter%20buy%20sell&page=3&date=day',
-        'https://gerdoo.me/search/?query='+key+'%20twitter%20buy%20sell&page=2&date=day',
-        'https://gerdoo.me/search/?query='+key+'%20twitter%20buy%20sell&page=1&date=day',
-        'https://gerdoo.me/search/?query='+key+'%20twitter%20analysis&page=5&date=day',
-        'https://gerdoo.me/search/?query='+key+'%20twitter%20analysis&page=4&date=day',
-        'https://gerdoo.me/search/?query='+key+'%20twitter%20analysis&page=3&date=day',
-        'https://gerdoo.me/search/?query='+key+'%20twitter%20analysis&page=2&date=day',
-        'https://gerdoo.me/search/?query='+key+'%20twitter%20analysis&page=1&date=day',
-        'https://gerdoo.me/search/?query=political%20news&page=5&date=day',
-        'https://gerdoo.me/search/?query=political%20news&page=4&date=day',
-        'https://gerdoo.me/search/?query=political%20news&page=3&date=day',
-        'https://gerdoo.me/search/?query=political%20news&page=2&date=day',
-        'https://gerdoo.me/search/?query=political%20news&page=1&date=day',
-        'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=5&date=day',
-        'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=4&date=day',
-        'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=3&date=day',
-        'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=2&date=day',
-        'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=1&date=day',
-        ]
+    def KeySearch(self,key,urls):
 
-        from nltk.corpus import stopwords
+
+
         global stop_words
         stop_words = set(stopwords.words('english'))
     
@@ -260,12 +236,14 @@ class Final_Calc:
 
 
 def pred_gold():
-    global gold,gold_news,gold_final
+    global gold,gold_news,gold_final,gold_news_1,gold_news_2,gold1,gold2,gold3
     gold = Data()
     gold1 = Data()
     gold2 = Data()
     gold3 = Data()
     gold_news = News()
+    gold_news_1 = News()
+    gold_news_2 = News()
     gold_final = Final_Calc()
 
     # load gold datas
@@ -274,12 +252,12 @@ def pred_gold():
     gold3.load_data('data/3/data.csv')
 
     # drop not needed features from cvs file list
-    gold1.drop_list = ['Date','Action','Change','Open','High','Low','Close']
+    gold1.drop_list = ['Date','Action','Change','Open','High','Low','Close','Volume']
     gold1.data_preprocessing(gold1.drop_list)
 
     gold2.data_preprocessing(gold1.drop_list)
 
-    gold3.drop_list = ['Date','Action','Change','Open','High','Low','Close','Volume']
+    gold3.drop_list = ['Date','Action','Change','Open','High','Low','Close']
     gold3.data_preprocessing(gold3.drop_list)
 
     # load gold model and weight of model
@@ -291,15 +269,29 @@ def pred_gold():
     gold.live_data('http://www.goldapi.io/api/XAU/USD','goldapi-19j4clrlk5p94q2-io')
 
     # get gold prices from json file
-    gold1.get_prices(prev_volume)
-    gold2.get_prices(prev_high_open)
-    gold3.get_prices(prev_open_low)
+    gold.get_prices()
 
     # prediction
-    gold.pred()
+    gold1.pred(prev_volume)
+    gold2.pred(prev_high_open)
+    gold3.pred(prev_open_low)
 
     # search in search engine
-    gold_news.KeySearch('xauusd')
+    # urls 
+    urls1 = [
+    'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=5&date=day',
+    'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=4&date=day',
+    'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=3&date=day',
+    'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=2&date=day',
+    'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=1&date=day',
+    'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=5&date=day',
+    'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=4&date=day',
+    'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=3&date=day',
+    'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=2&date=day',
+    'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=1&date=day',
+    ]
+
+    gold_news_1.KeySearch('xauusd',urls1)
 
     # process news
     gold_news.ProcessNews()
