@@ -14,7 +14,7 @@ from nltk.stem import WordNetLemmatizer
 from textblob import TextBlob
 from nltk.corpus import stopwords
 import os
-import datatime form datatime
+from datetime import datetime
 
 global signal_news
 signal_news = ""
@@ -110,7 +110,7 @@ class Data:
 
     def pred(self,fo):
         global pred,signal_data,buy_counter,sell_counter
-        new_pred = loaded_model.predict(sc.transform(np.array([[prev_open,prev_high,prev_low,prev_close,prev_change,prev_high_low,prev_close_high,prev_sum_4_price,fo]])))
+        new_pred = loaded_model.predict(sc.transform(np.array([[prev_open,prev_high,prev_low,prev_close,fo,prev_change,prev_high_low,prev_close_high,prev_sum_4_price]])))
         pred = new_pred
         new_pred = (new_pred > 0.5)
 
@@ -119,10 +119,10 @@ class Data:
 
         if (new_pred):
             buy_counter = buy_counter + 1
-            self.signal_data = "Buy"
+            signal_data = "Buy"
         else:
             sell_counter = sell_counter + 1
-            self.signal_data = "Sell"
+            signal_data = "Sell"
 
 class News:
     global s,count_positive,count_neutral,count_negative,urls,pn,sell_counter,pns,percent_negative,percent_positive
@@ -188,35 +188,32 @@ class News:
             percent_positive = 0
             percent_negative = 0
 
-        buy_counter = 0
-        sell_counter = 0
-
-        if(percent_positive > 60):
+        if(percent_positive > 50):
             buy_counter = buy_counter + 1
             pn = 1
             pns = "Buy"
-            self.signal_news = "Buy"
-        elif(percent_negative > 60):
+            signal_news = "Buy"
+        elif(percent_negative >= 50):
             sell_counter = sell_counter + 1
             pn = -1
             pns = "Sell"
-            self.signal_news = "Sell"
+            signal_news = "Sell"
         else:
             pn = 0
             pns = "Neutral"
-            self.signal_news = "Neutral"
+            signal_news = "Neutral"
 
 class Final_Calc:
-    global data_class
-    data_class = Data()
-    def Final(self):
-        global final_signal
-        if(buy_counter > 2):
-            self.final_signal = "Buy"
-        elif(sell_counter > 2):
-            self.final_signal = "Sell"
 
-    def save_singal():
+    def save_singal(self):
+        global data_class,final_signal
+        data_class = Data()
+        
+        if(buy_counter > sell_counter):
+            final_signal = "Buy"
+        else:
+            final_signal = "Sell"
+
         # get day
         today = datetime.now()
         day = today.strftime("%d")
@@ -244,10 +241,10 @@ class Final_Calc:
 
         new_path = timeh + "-" + timem + ".txt"
         pred = open("date/"+directory+"/"+new_path,'w')
-        txt = 'Data: ' + signal_data + '\nNews: ' + signal_news + '\nAll: ' + signal
+        txt = 'Data: ' + signal_data + '\nNews: ' + signal_news + '\nAll: ' + final_signal
         pred.write(txt)
-    
-    def draw_table():
+
+        global sp
         if(signal_news == 'Sell' or signal_news == 'Buy'):
 	        sp = "          "
         else:
@@ -273,7 +270,7 @@ class Final_Calc:
         print("        Open	      High	    Low	        Price          Change      	 Data	        News           Final   ")
 
         print("      ────────────────────────────────────────────────────────────────────────────────────────────────────────────────      ")
-        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",close_price,"      ",change,"  	        ",signal_data,"	       ",signal_news,sp,signal,"    ")
+        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"  	        ",signal_data,"	       ",signal_news,sp,final_signal,"    ")
         print("")
         print("      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓      ")
 
@@ -313,15 +310,16 @@ def pred_gold():
     gold1.drop_list = ['Date','Action','Change','Open','High','Low','Close','Volume']
     gold1.data_preprocessing(gold1.drop_list)
 
-    gold2.data_preprocessing(gold1.drop_list)
+    gold2.drop_list = ['Date','Action','Change','Open','High','Low','Close','Volume']
 
-    gold3.drop_list = ['Date','Action','Change','Open','High','Low','Close']
-    gold3.data_preprocessing(gold3.drop_list)
+    gold2.data_preprocessing(gold2.drop_list)
+
+    gold3.data_preprocessing(gold2.drop_list)
 
     # load gold model and weight of model
-    gold1.load_model('model/model-1/model.json','model/model-1/model.json')
-    gold2.load_model('model/model-2/model.json','model/model-2/model.json')
-    gold3.load_model('model/model-3/model.json','model/model-3/model.json')
+    gold1.load_model('model/model-1/model.json','model/model-1/model.h5')
+    gold2.load_model('model/model-2/model.json','model/model-2/model.h5')
+    gold3.load_model('model/model-3/model.json','model/model-3/model.h5')
 
     # get live stream gold data from goldapi.io
     gold.live_data('http://www.goldapi.io/api/XAU/USD','goldapi-19j4clrlk5p94q2-io')
@@ -371,9 +369,8 @@ def pred_gold():
     gold_news_2.ProcessNews(urls2,'span','title-rY32JioV')
 
     #compire news with data
-    gold_final.Final()
     gold_final.save_singal()
-    gold_final.draw_table()
+
 
 #Run
 pred_gold()
