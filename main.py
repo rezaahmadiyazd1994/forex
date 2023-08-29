@@ -18,6 +18,9 @@ from datetime import datetime
 
 global signal_news
 signal_news = ""
+global sell_counter,buy_counter
+sell_counter = 0
+buy_counter = 0
 
 class Data:
     def load_data(self,csv_path):
@@ -114,8 +117,7 @@ class Data:
         pred = new_pred
         new_pred = (new_pred > 0.5)
 
-        sell_counter = 0
-        buy_counter = 0
+
 
         if (new_pred):
             buy_counter = buy_counter + 1
@@ -208,7 +210,8 @@ class Final_Calc:
     def save_singal(self):
         global data_class,final_signal
         data_class = Data()
-        
+        print("Buy Counter: ",buy_counter)
+        print("Sell Counter: ",sell_counter)
         if(buy_counter > sell_counter):
             final_signal = "Buy"
         else:
@@ -359,14 +362,7 @@ def pred_gold():
 
 
     # process news 1
-    gold_news_1.ProcessNews(urls1,'span','highlight-text')
-
-    # url2
-    urls2 = [
-    'https://www.tradingview.com/symbols/XAUUSD/news/?exchange=FX'
-    ]
-
-    gold_news_2.ProcessNews(urls2,'span','title-rY32JioV')
+    gold_news.ProcessNews(urls1,'span','highlight-text')
 
     #compire news with data
     gold_final.save_singal()
