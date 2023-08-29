@@ -133,7 +133,7 @@ class News:
     pns = ""
 
     def ProcessNews(self,urls,element,class_element):
-        global pn,pns,signal_news,stop_words
+        global pn,pns,signal_news,stop_words,buy_counter,sell_counter
         stop_words = set(stopwords.words('english'))
 
         for url in urls:
@@ -362,7 +362,10 @@ def pred_gold():
 
 
     # process news 1
-    gold_news.ProcessNews(urls1,'span','highlight-text')
+    try:
+        gold_news.ProcessNews(urls1,'span','highlight-text')
+    except:
+        pass
 
     #compire news with data
     gold_final.save_singal()
