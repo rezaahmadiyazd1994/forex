@@ -82,7 +82,7 @@ class Data:
 
 
 
-    def get_prices(self):
+    def get_prices(self,api_key):
         global prev_open,prev_high,prev_low,prev_close,prev_change,prev_high_low,prev_close_high,prev_sum_4_price,prev_volume,prev_high_open,prev_open_low
         # load prev prices value
         # read file
@@ -116,8 +116,6 @@ class Data:
         new_pred = loaded_model.predict(sc.transform(np.array([[prev_open,prev_high,prev_low,prev_close,fo,prev_change,prev_high_low,prev_close_high,prev_sum_4_price]])))
         pred = new_pred
         new_pred = (new_pred > 0.5)
-
-
 
         if (new_pred):
             buy_counter = buy_counter + 1
