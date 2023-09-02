@@ -15,14 +15,45 @@ from textblob import TextBlob
 from nltk.corpus import stopwords
 import os
 from datetime import datetime
+from abc import ABC, abstractmethod
 
-global signal_news
-signal_news = ""
-global sell_counter,buy_counter
+global signal_news,sell_counter,buy_counter
 sell_counter = 0
 buy_counter = 0
 
-class Data:
+class Model_Data(ABC):
+
+    @abstractmethod
+    def load_data(self,csv_path):
+        pass
+
+    @abstractmethod
+    def data_preprocessing(self,drop_list):
+        pass
+
+    @abstractmethod
+    def load_model(self,path_json,path_h5):
+        pass
+
+    @abstractmethod
+    def live_data(self,urn,api_key):
+        pass
+
+    @abstractmethod
+    def get_prices(self,api_key):
+        pass
+
+    @abstractmethod
+    def pred(self,fo):
+        pass
+
+class Analyes_News(ABC):
+    
+    @abstractmethod
+    def ProcessNews(self,urls,element,class_element):
+        pass
+
+class Data(Model_Data):
     def load_data(self,csv_path):
         global df_final
         df_final = pd.read_csv(csv_path)
@@ -119,12 +150,14 @@ class Data:
 
         if (new_pred):
             buy_counter = buy_counter + 1
+            print("Add Buy")
             signal_data = "Buy"
         else:
             sell_counter = sell_counter + 1
+            print("Add Sell")
             signal_data = "Sell"
 
-class News:
+class News(Analyes_News):
     global s,count_positive,count_neutral,count_negative,urls,pn,sell_counter,pns,percent_negative,percent_positive
     percent_positive = 0
     percent_negative = 0
@@ -190,11 +223,13 @@ class News:
 
         if(percent_positive > 50):
             buy_counter = buy_counter + 1
+            print("Add Buy")
             pn = 1
             pns = "Buy"
             signal_news = "Buy"
         elif(percent_negative >= 50):
             sell_counter = sell_counter + 1
+            print("Add Sell")
             pn = -1
             pns = "Sell"
             signal_news = "Sell"
