@@ -357,11 +357,13 @@ def pred_gold():
     gold2.load_model('model/model-2/model.json','model/model-2/model.h5')
     gold3.load_model('model/model-3/model.json','model/model-3/model.h5')
 
+    api_key = 'your api key'
+
     # get live stream gold data from goldapi.io
-    gold.live_data('http://www.goldapi.io/api/XAU/USD','goldapi-19j4clrlk5p94q2-io')
+    gold.live_data('http://www.goldapi.io/api/XAU/USD',api_key)
 
     # get gold prices from json file
-    gold.get_prices('goldapi-19j4clrlk5p94q2-io')
+    gold.get_prices('goldapi-19j4clrlk5p94q2-io',api_key)
 
     # prediction
     gold1.pred(prev_volume)
