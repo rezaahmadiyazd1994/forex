@@ -363,7 +363,7 @@ def pred_gold():
     gold.live_data('http://www.goldapi.io/api/XAU/USD',api_key)
 
     # get gold prices from json file
-    gold.get_prices('goldapi-19j4clrlk5p94q2-io',api_key)
+    gold.get_prices(api_key)
 
     # prediction
     gold1.pred(prev_volume)
