@@ -234,6 +234,7 @@ class News(Analyes_News):
             pns = "Sell"
             signal_news = "Sell"
         else:
+            print("Add Neutral")
             pn = 0
             pns = "Neutral"
             signal_news = "Neutral"
@@ -303,10 +304,10 @@ class Final_Calc:
         print("      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓      ")
 
         print("")
-        print("        Open	      High	    Low	        Price          Change      	 Data	        News           Final   ")
+        print("        Open	      High	    Low	        Price          Change      	 Buy	        Sell           Final   ")
 
         print("      ────────────────────────────────────────────────────────────────────────────────────────────────────────────────      ")
-        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"  	        ",signal_data,"	       ",signal_news,sp,final_signal,"    ")
+        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"  	        ",buy_counter,"	       ",sell_counter,sp,final_signal,"    ")
         print("")
         print("      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓      ")
 
@@ -343,14 +344,13 @@ def pred_gold():
     gold3.load_data('data/3/data.csv')
 
     # drop not needed features from cvs file list
-    gold1.drop_list = ['Date','Action','Change','Open','High','Low','Close','Volume']
-    gold1.data_preprocessing(gold1.drop_list)
+    gold.drop_list = ['Date','Action','Change','Open','High','Low','Close','Volume']
 
-    gold2.drop_list = ['Date','Action','Change','Open','High','Low','Close','Volume']
+    gold1.data_preprocessing(gold.drop_list)
 
-    gold2.data_preprocessing(gold2.drop_list)
+    gold2.data_preprocessing(gold.drop_list)
 
-    gold3.data_preprocessing(gold2.drop_list)
+    gold3.data_preprocessing(gold.drop_list)
 
     # load gold model and weight of model
     gold1.load_model('model/model-1/model.json','model/model-1/model.h5')
@@ -396,7 +396,18 @@ def pred_gold():
 
     # process news 1
     try:
-        gold_news.ProcessNews(urls1,'span','highlight-text')
+        gold_news_1.ProcessNews(urls1,'span','highlight-text')
+    except:
+        pass
+
+    urls2 =[
+        'https://www.google.com/search?q=twitter+xauusd+prediction&sca_esv=562202921&tbs=qdr:d&ei=cV7zZLGPGayzi-gP3aWGiAE&start=20&sa=N&ved=2ahUKEwjxi9ieqIyBAxWs2QIHHd2SAREQ8tMDegQICBAG&biw=1366&bih=611&dpr=1',
+        'https://www.google.com/search?q=twitter+xauusd+prediction&sca_esv=562202921&tbs=qdr:d&ei=cV7zZLGPGayzi-gP3aWGiAE&start=20&sa=N&ved=2ahUKEwjxi9ieqIyBAxWs2QIHHd2SAREQ8tMDegQICBAG&biw=1366&bih=611&dpr=1'
+    ]
+
+    # process news 2
+    try:
+        gold_news_2.ProcessNews(urls2,'div','VwiC3b')
     except:
         pass
 
