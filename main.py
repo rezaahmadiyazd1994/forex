@@ -281,11 +281,6 @@ class Final_Calc:
         txt = 'Data: ' + signal_data + '\nNews: ' + signal_news + '\nAll: ' + final_signal
         pred.write(txt)
 
-        global sp
-        if(signal_news == 'Sell' or signal_news == 'Buy'):
-	        sp = "          "
-        else:
-	        sp = "       "
 
         print("")
         print("")
@@ -307,7 +302,7 @@ class Final_Calc:
         print("        Open	      High	    Low	        Price          Change      	 Buy	        Sell           Final   ")
 
         print("      ────────────────────────────────────────────────────────────────────────────────────────────────────────────────      ")
-        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"  	        ",buy_counter,"	       ",sell_counter,sp,final_signal,"    ")
+        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"  	         ",buy_counter,"	         ",sell_counter,"           ",final_signal,"    ")
         print("")
         print("      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓      ")
 
@@ -357,7 +352,7 @@ def pred_gold():
     gold2.load_model('model/model-2/model.json','model/model-2/model.h5')
     gold3.load_model('model/model-3/model.json','model/model-3/model.h5')
 
-    api_key = 'your api key'
+    api_key = 'goldapi-19j4clrlk5p94q2-io'
 
     # get live stream gold data from goldapi.io
     gold.live_data('http://www.goldapi.io/api/XAU/USD',api_key)
