@@ -17,7 +17,7 @@ import os
 from datetime import datetime
 from abc import ABC, abstractmethod
 
-global signal_news,sell_counter,buy_counter
+global sell_counter,buy_counter
 sell_counter = 0
 buy_counter = 0
 
@@ -143,28 +143,26 @@ class Data(Model_Data):
         prev_open_low = prev_open - prev_low
 
     def pred(self,fo):
-        global pred,signal_data,buy_counter,sell_counter
+        global pred,buy_counter,sell_counter
         new_pred = loaded_model.predict(sc.transform(np.array([[prev_open,prev_high,prev_low,prev_close,fo,prev_change,prev_high_low,prev_close_high,prev_sum_4_price]])))
         pred = new_pred
         new_pred = (new_pred > 0.5)
 
         if (new_pred):
             buy_counter = buy_counter + 1
-            print("Add Buy")
-            signal_data = "Buy"
+            print("Buy")
         else:
             sell_counter = sell_counter + 1
-            print("Add Sell")
-            signal_data = "Sell"
+            print("Sell")
 
 class News(Analyes_News):
     global s,count_positive,count_neutral,count_negative,urls,pn,sell_counter,pns,percent_negative,percent_positive
     percent_positive = 0
     percent_negative = 0
-    pns = ""
+    pns = NULL
 
     def ProcessNews(self,urls,element,class_element):
-        global pn,pns,signal_news,stop_words,buy_counter,sell_counter
+        global pn,pns,stop_words,buy_counter,sell_counter
         stop_words = set(stopwords.words('english'))
 
         for url in urls:
@@ -223,21 +221,18 @@ class News(Analyes_News):
 
         if(percent_positive > 50):
             buy_counter = buy_counter + 1
-            print("Add Buy")
+            print("Buy")
             pn = 1
             pns = "Buy"
-            signal_news = "Buy"
         elif(percent_negative >= 50):
             sell_counter = sell_counter + 1
-            print("Add Sell")
+            print("Sell")
             pn = -1
             pns = "Sell"
-            signal_news = "Sell"
         else:
             print("Add Neutral")
             pn = 0
             pns = "Neutral"
-            signal_news = "Neutral"
 
 class Final_Calc:
 
@@ -302,7 +297,7 @@ class Final_Calc:
         print("        Open	      High	    Low	        Price          Change      	 Buy	        Sell           Final   ")
 
         print("      ────────────────────────────────────────────────────────────────────────────────────────────────────────────────      ")
-        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"  	         ",buy_counter,"	         ",sell_counter,"           ",final_signal,"    ")
+        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"     ",buy_counter,"     ",sell_counter,"        ",final_signal,"    ")
         print("")
         print("      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓      ")
 
@@ -378,6 +373,16 @@ def pred_gold():
     'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=3&date=day',
     'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=2&date=day',
     'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=1&date=day',
+    ]
+
+
+    # process news 1
+    try:
+        gold_news_1.ProcessNews(urls1,'span','highlight-text')
+    except:
+        pass
+
+    urls2 =[
     'https://gerdoo.me/search/?query=political%20news&page=5&date=day',
     'https://gerdoo.me/search/?query=political%20news&page=4&date=day',
     'https://gerdoo.me/search/?query=political%20news&page=3&date=day',
@@ -390,21 +395,9 @@ def pred_gold():
     'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=1&date=day',
     ]
 
-
-    # process news 1
-    try:
-        gold_news_1.ProcessNews(urls1,'span','highlight-text')
-    except:
-        pass
-
-    urls2 =[
-        'https://www.google.com/search?q=Gold+news+ascending&sca_esv=562548860&sxsrf=AB5stBgxVuStZgXga3yJREhSzje2BWEkGA:1693841596201&source=lnt&tbs=qdr:d&sa=X&ved=2ahUKEwjv0ZPVo5GBAxUXRKQEHWJCAAAQpwV6BAgFEA0&biw=1366&bih=611&dpr=1',
-        'https://www.google.com/search?q=Gold+news+Descending&sca_esv=562548860&biw=1366&bih=611&tbs=qdr%3Ad&sxsrf=AB5stBjsbIGJPEEBVhX9pnLBs8r0Ofzv_A%3A1693841613803&ei=zfj1ZITZMJuwi-gP8LWXiAM&ved=0ahUKEwjE88jdo5GBAxUb2AIHHfDaBTEQ4dUDCA8&uact=5&oq=Gold+news+Descending&gs_lp=Egxnd3Mtd2l6LXNlcnAiFEdvbGQgbmV3cyBEZXNjZW5kaW5nMgoQABhHGNYEGLADMgoQABhHGNYEGLADMgoQABhHGNYEGLADMgoQABhHGNYEGLADMgoQABhHGNYEGLADMgoQABhHGNYEGLADMgoQABhHGNYEGLADMgoQABhHGNYEGLADSJ73AlDD8wJYovYCcAN4AZABAJgBAKABAKoBALgBA8gBAPgBAfgBAuIDBBgAIEGIBgGQBgg&sclient=gws-wiz-serp'
-    ]
-
     # process news 2
     try:
-        gold_news_2.ProcessNews(urls2,'div','VwiC3b')
+        gold_news_2.ProcessNews(urls2,'span','highlight-text')
     except:
         pass
 
