@@ -243,8 +243,10 @@ class Final_Calc:
         print("Sell Counter: ",sell_counter)
         if(buy_counter > sell_counter):
             final_signal = "Buy"
-        else:
+        elif(sell_counter > buy_counter):
             final_signal = "Sell"
+        else:
+            final_signal = "Neutral"
 
         # get day
         today = datetime.now()
