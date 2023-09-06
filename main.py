@@ -218,8 +218,9 @@ class News(Analyes_News):
             count_all = 0
             percent_positive = 0
             percent_negative = 0
+            print("Neutral")
 
-        if(percent_positive > 50):
+        if(percent_positive >= 50):
             buy_counter = buy_counter + 1
             print("Buy")
             pn = 1
@@ -230,7 +231,7 @@ class News(Analyes_News):
             pn = -1
             pns = "Sell"
         else:
-            print("Add Neutral")
+            print("Neutral")
             pn = 0
             pns = "Neutral"
 
