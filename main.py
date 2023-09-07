@@ -147,6 +147,7 @@ class Data(Model_Data):
         new_pred = loaded_model.predict(sc.transform(np.array([[prev_open,prev_high,prev_low,prev_close,fo,prev_change,prev_high_low,prev_close_high,prev_sum_4_price]])))
         pred = new_pred
         new_pred = (new_pred > 0.5)
+        print(pred)
 
         if (new_pred):
             buy_counter = buy_counter + 1
