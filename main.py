@@ -58,9 +58,9 @@ class Data(Model_Data):
         global df_final
         df_final = pd.read_csv(csv_path)
    
-    def data_preprocessing(self,drop_list):
+    def data_preprocessing(self):
         # Data pre-processing
-        X = df_final.drop(drop_list,axis=1).values
+        X = df_final.drop(['Date','Action','Change','Open','High','Low','Close','Volume'],axis=1).values
         y = df_final['Action'].values
 
         # Split Train And Test Data
@@ -301,7 +301,7 @@ class Final_Calc:
         print("        Open	      High	    Low	        Price          Change      	 Buy	        Sell           Final   ")
 
         print("      ────────────────────────────────────────────────────────────────────────────────────────────────────────────────      ")
-        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"               ",buy_counter,"                 ",sell_counter,"          ",final_signal,"    ")
+        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"            ",buy_counter,"              ",sell_counter,"          ",final_signal,"    ")
         print("")
         print("      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓      ")
 
@@ -338,13 +338,11 @@ def pred_gold():
     gold3.load_data('data/3/data.csv')
 
     # drop not needed features from cvs file list
-    gold.drop_list = ['Date','Action','Change','Open','High','Low','Close','Volume']
+    gold1.data_preprocessing()
 
-    gold1.data_preprocessing(gold.drop_list)
+    gold2.data_preprocessing()
 
-    gold2.data_preprocessing(gold.drop_list)
-
-    gold3.data_preprocessing(gold.drop_list)
+    gold3.data_preprocessing()
 
     # load gold model and weight of model
     gold1.load_model('model/model-1/model.json','model/model-1/model.h5')

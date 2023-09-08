@@ -15,7 +15,7 @@ os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 df_final = pd.read_csv('data/1/data.csv')
 
 # Data pre-processing
-X = df_final.drop(['Date','Open','High','Low','Close','Change','Volume','Action'],axis=1).values
+X = df_final.drop(['Date','Open','High','Low','Close','Change','Action'],axis=1).values
 y = df_final['Action'].values
 
 # Split Train And Test Data
