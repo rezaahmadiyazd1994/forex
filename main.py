@@ -265,7 +265,7 @@ class Final_Calc:
         directory = day+"-"+datem+"-"+datet
         
         # Parent Directory path
-        parent_dir = "date"
+        parent_dir = "signal"
         
         # Path
         path = os.path.join(parent_dir, directory)
@@ -276,7 +276,7 @@ class Final_Calc:
             os.mkdir(path)
 
         new_path = timeh + "-" + timem + ".txt"
-        pred = open("date/"+directory+"/"+new_path,'w')
+        pred = open("signal/"+directory+"/"+new_path,'w')
         txt = 'Signal: ' + final_signal + '\nBuy: ' + str(buy_counter) + '\nSell: ' + str(sell_counter)
         pred.write(txt)
 
