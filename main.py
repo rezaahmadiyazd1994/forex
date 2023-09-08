@@ -114,7 +114,7 @@ class Data(Model_Data):
 
 
     def get_prices(self,api_key):
-        global prev_open,prev_high,prev_low,prev_close,prev_change,prev_high_low,prev_close_high,prev_sum_4_price,prev_volume,prev_high_open,prev_open_low
+        global prev_open,prev_high,prev_low,prev_close,prev_change,prev_high_low,prev_close_high,prev_sum_4_price,prev_high_plus_low,prev_high_open,prev_open_low
         # load prev prices value
         # read file
         with open('price.json', 'r') as myfile:
@@ -134,7 +134,7 @@ class Data(Model_Data):
         prev_sum_4_price = prev_open + prev_high + prev_low + prev_close
 
         #for only data1
-        prev_volume = y["p_volume"]
+        prev_high_plus_low = prev_high + prev_low
 
         #for only data2
         prev_high_open = prev_high - prev_open
@@ -301,7 +301,7 @@ class Final_Calc:
         print("        Open	      High	    Low	        Price          Change      	 Buy	        Sell           Final   ")
 
         print("      ────────────────────────────────────────────────────────────────────────────────────────────────────────────────      ")
-        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"     ",buy_counter,"     ",sell_counter,"        ",final_signal,"    ")
+        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"            ",buy_counter,"            ",sell_counter,"          ",final_signal,"    ")
         print("")
         print("      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓      ")
 
@@ -360,7 +360,7 @@ def pred_gold():
     gold.get_prices(api_key)
 
     # prediction
-    gold1.pred(prev_volume)
+    gold1.pred(prev_high_plus_low)
     gold2.pred(prev_high_open)
     gold3.pred(prev_open_low)
 
