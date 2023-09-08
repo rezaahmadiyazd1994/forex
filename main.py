@@ -277,7 +277,7 @@ class Final_Calc:
 
         new_path = timeh + "-" + timem + ".txt"
         pred = open("date/"+directory+"/"+new_path,'w')
-        txt = 'All:' + final_signal
+        txt = 'Signal: ' + final_signal + '\nBuy: ' + str(buy_counter) + '\nSell: ' + str(sell_counter)
         pred.write(txt)
 
 
@@ -301,7 +301,7 @@ class Final_Calc:
         print("        Open	      High	    Low	        Price          Change      	 Buy	        Sell           Final   ")
 
         print("      ────────────────────────────────────────────────────────────────────────────────────────────────────────────────      ")
-        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"            ",buy_counter,"            ",sell_counter,"          ",final_signal,"    ")
+        print("     ",open_price,"	    ",high_price," 	 ",low_price,"     ",price,"      ",change,"               ",buy_counter,"                 ",sell_counter,"          ",final_signal,"    ")
         print("")
         print("      ▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓▓      ")
 
