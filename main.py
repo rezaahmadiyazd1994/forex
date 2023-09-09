@@ -58,9 +58,9 @@ class Data(Model_Data):
         global df_final
         df_final = pd.read_csv(csv_path)
    
-    def data_preprocessing(self):
+    def data_preprocessing(self,drop_list):
         # Data pre-processing
-        X = df_final.drop(['Date','Action','Change','Open','High','Low','Close','Volume'],axis=1).values
+        X = df_final.drop(drop_list,axis=1).values
         y = df_final['Action'].values
 
         # Split Train And Test Data
@@ -332,34 +332,25 @@ def pred_gold():
     gold_news_2 = News()
     gold_final = Final_Calc()
 
-    # load gold datas
-    gold1.load_data('data/1/data.csv')
-    gold2.load_data('data/2/data.csv')
-    gold3.load_data('data/3/data.csv')
-
-    # drop not needed features from cvs file list
-    gold1.data_preprocessing()
-
-    gold2.data_preprocessing()
-
-    gold3.data_preprocessing()
-
-    # load gold model and weight of model
-    gold1.load_model('model/model-1/model.json','model/model-1/model.h5')
-    gold2.load_model('model/model-2/model.json','model/model-2/model.h5')
-    gold3.load_model('model/model-3/model.json','model/model-3/model.h5')
-
     api_key = 'goldapi-pzslrli9209sg-io'
-
     # get live stream gold data from goldapi.io
     gold.live_data('http://www.goldapi.io/api/XAU/USD',api_key)
-
     # get gold prices from json file
     gold.get_prices(api_key)
 
-    # prediction
+    gold1.load_data('data/1/data.csv')
+    gold1.data_preprocessing(['Date','Action','Change','Open','High','Low','Close'])
+    gold1.load_model('model/model-1/model.json','model/model-1/model.h5')
     gold1.pred(prev_high_plus_low)
+
+    gold2.load_data('data/2/data.csv')
+    gold2.data_preprocessing(['Date','Action','Change','Open','High','Low','Close'])
+    gold2.load_model('model/model-2/model.json','model/model-2/model.h5')
     gold2.pred(prev_high_open)
+
+    gold3.load_data('data/3/data.csv')
+    gold3.data_preprocessing(['Date','Action','Change','Open','High','Low','Close','Volume'])
+    gold3.load_model('model/model-3/model.json','model/model-3/model.h5')
     gold3.pred(prev_open_low)
 
     # search in search engine

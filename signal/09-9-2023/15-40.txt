@@ -1,0 +1,3 @@
+Signal: Buy
+Buy: 2
+Sell: 0
