@@ -332,7 +332,7 @@ def pred_gold():
     gold_news_2 = News()
     gold_final = Final_Calc()
 
-    api_key = 'goldapi-187e5blrlgb9db7n-io'
+    api_key = 'your key'
     # get live stream gold data from goldapi.io
     gold.live_data('http://www.goldapi.io/api/XAU/USD',api_key)
     # get gold prices from json file
