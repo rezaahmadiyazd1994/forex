@@ -332,7 +332,7 @@ def pred_gold():
     gold_news_2 = News()
     gold_final = Final_Calc()
 
-    with open('key.txt') as f:
+    with open('key') as f:
         api_key = f.read()
     api_key = str(api_key)
     print(api_key)
