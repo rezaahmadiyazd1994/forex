@@ -1,3 +1,0 @@
-Signal: Neutral
-Buy: 2
-Sell: 2

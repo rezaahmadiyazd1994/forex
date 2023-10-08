@@ -12,7 +12,7 @@ from keras.layers import Dropout
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # First, we get the data
-df_final = pd.read_csv('data/2/data.csv')
+df_final = pd.read_csv('data/1/data.csv')
 
 # Data pre-processing
 X = df_final.drop(['Date','Open','High','Low','Close','Change','Action','Volume'],axis=1).values
@@ -33,7 +33,7 @@ model.add(Dropout(0.1))
 model.add(Dense(1, kernel_initializer = 'uniform', activation = 'sigmoid')) #Output Layer
 model.compile(optimizer= 'adam',loss = 'binary_crossentropy',metrics = ['accuracy'])
 
-model.fit(X_train, y_train, batch_size = 10, epochs = 1000) #Fitness ANN to Train Dataset 
+model.fit(X_train, y_train, batch_size = 10, epochs = 1320) #Fitness ANN to Train Dataset 
 
 y_pred = model.predict(X_test)
 y_pred = (y_pred > 0.5)

@@ -322,14 +322,12 @@ class Final_Calc:
 
 
 def pred_gold():
-    global gold,gold_news,gold_final,gold_news_1,gold_news_2,gold1,gold2,gold3
+    global gold,gold_news,gold_final,gold_news_1,gold1,gold2
     gold = Data()
     gold1 = Data()
     gold2 = Data()
-    gold3 = Data()
     gold_news = News()
     gold_news_1 = News()
-    gold_news_2 = News()
     gold_final = Final_Calc()
 
     with open('key') as f:
@@ -343,23 +341,18 @@ def pred_gold():
     gold.get_prices(api_key)
 
     gold1.load_data('data/1/data.csv')
-    gold1.data_preprocessing(['Date','Action','Change','Open','High','Low','Close'])
+    gold1.data_preprocessing(['Date','Action','Change','Open','High','Low','Close','Volume'])
     gold1.load_model('model/model-1/model.json','model/model-1/model.h5')
     gold1.pred(prev_high_plus_low)
 
     gold2.load_data('data/2/data.csv')
-    gold2.data_preprocessing(['Date','Action','Change','Open','High','Low','Close'])
+    gold2.data_preprocessing(['Date','Action','Change','Open','High','Low','Close','Volume'])
     gold2.load_model('model/model-2/model.json','model/model-2/model.h5')
     gold2.pred(prev_high_open)
 
-    gold3.load_data('data/3/data.csv')
-    gold3.data_preprocessing(['Date','Action','Change','Open','High','Low','Close','Volume'])
-    gold3.load_model('model/model-3/model.json','model/model-3/model.h5')
-    gold3.pred(prev_open_low)
-
     # search in search engine
     # urls 
-    urls1 = [
+    urls = [
     'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=5&date=day',
     'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=4&date=day',
     'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=3&date=day',
@@ -370,16 +363,6 @@ def pred_gold():
     'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=3&date=day',
     'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=2&date=day',
     'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=1&date=day',
-    ]
-
-
-    # process news 1
-    try:
-        gold_news_1.ProcessNews(urls1,'span','highlight-text')
-    except:
-        pass
-
-    urls2 =[
     'https://gerdoo.me/search/?query=political%20news&page=5&date=day',
     'https://gerdoo.me/search/?query=political%20news&page=4&date=day',
     'https://gerdoo.me/search/?query=political%20news&page=3&date=day',
@@ -389,12 +372,13 @@ def pred_gold():
     'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=4&date=day',
     'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=3&date=day',
     'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=2&date=day',
-    'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=1&date=day',
+    'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=1&date=day'
     ]
 
-    # process news 2
+
+    # process news 1
     try:
-        gold_news_2.ProcessNews(urls2,'span','highlight-text')
+        gold_news_1.ProcessNews(urls,'span','highlight-text')
     except:
         pass
 
