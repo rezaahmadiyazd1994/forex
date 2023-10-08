@@ -219,7 +219,6 @@ class News(Analyes_News):
             count_all = 0
             percent_positive = 0
             percent_negative = 0
-            print("Neutral")
 
         if(percent_positive >= 50):
             buy_counter = buy_counter + 1
@@ -352,35 +351,24 @@ def pred_gold():
 
     # search in search engine
     # urls 
-    urls = [
-    'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=5&date=day',
-    'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=4&date=day',
-    'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=3&date=day',
-    'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=2&date=day',
-    'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=1&date=day',
-    'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=5&date=day',
-    'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=4&date=day',
-    'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=3&date=day',
-    'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=2&date=day',
-    'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=1&date=day',
-    'https://gerdoo.me/search/?query=political%20news&page=5&date=day',
-    'https://gerdoo.me/search/?query=political%20news&page=4&date=day',
-    'https://gerdoo.me/search/?query=political%20news&page=3&date=day',
-    'https://gerdoo.me/search/?query=political%20news&page=2&date=day',
-    'https://gerdoo.me/search/?query=political%20news&page=1&date=day',
-    'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=5&date=day',
-    'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=4&date=day',
-    'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=3&date=day',
-    'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=2&date=day',
-    'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=1&date=day'
-    ]
+    # urls = [
+    # 'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=5&date=day',
+    # 'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=4&date=day',
+    # 'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=3&date=day',
+    # 'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=2&date=day',
+    # 'https://gerdoo.me/search/?query=xauusd%20twitter%20buy%20sell&page=1&date=day',
+    # 'https://gerdoo.me/search/?query=xauusd%20twitter%20analysis&page=1&date=day',
+    # 'https://gerdoo.me/search/?query=political%20news&page=2&date=day',
+    # 'https://gerdoo.me/search/?query=political%20news&page=1&date=day',
+    # 'https://gerdoo.me/search/?query=Political%20and%20economic%20news&page=1&date=day'
+    # ]
 
 
-    # process news 1
-    try:
-        gold_news_1.ProcessNews(urls,'span','highlight-text')
-    except:
-        pass
+    # # process news 1
+    # try:
+        # gold_news_1.ProcessNews(urls,'span','highlight-text')
+    # except:
+    #     pass
 
     #compire news with data
     gold_final.save_signal()
