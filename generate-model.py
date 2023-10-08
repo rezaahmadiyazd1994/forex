@@ -12,10 +12,10 @@ from keras.layers import Dropout
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
 # First, we get the data
-df_final = pd.read_csv('data/1/data.csv')
+df_final = pd.read_csv('data/3/data.csv')
 
 # Data pre-processing
-X = df_final.drop(['Date','Open','High','Low','Close','Change','Action','Volume'],axis=1).values
+X = df_final.drop(['Date','Open','High','Low','Close','Change','Action'],axis=1).values
 y = df_final['Action'].values
 
 # Split Train And Test Data

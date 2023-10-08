@@ -1,0 +1,5 @@
+Signal: Buy
+Buy: 2
+Sell: 1
+Date: 10/04
+Result: Buy

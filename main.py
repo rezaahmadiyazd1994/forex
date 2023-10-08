@@ -137,10 +137,11 @@ class Data(Model_Data):
         prev_high_plus_low = prev_high + prev_low
 
         #for only data2
-        prev_high_open = prev_high - prev_open
+        prev_open_low = prev_open - prev_low
 
         #for only data3
-        prev_open_low = prev_open - prev_low
+        prev_high_open = prev_high - prev_open
+
 
     def pred(self,fo):
         global pred,buy_counter,sell_counter
@@ -321,10 +322,11 @@ class Final_Calc:
 
 
 def pred_gold():
-    global gold,gold_news,gold_final,gold_news_1,gold1,gold2
+    global gold,gold_news,gold_final,gold_news_1,gold1,gold2,gold3
     gold = Data()
     gold1 = Data()
     gold2 = Data()
+    gold3 = Data()
     gold_news = News()
     gold_news_1 = News()
     gold_final = Final_Calc()
@@ -347,7 +349,12 @@ def pred_gold():
     gold2.load_data('data/2/data.csv')
     gold2.data_preprocessing(['Date','Action','Change','Open','High','Low','Close','Volume'])
     gold2.load_model('model/model-2/model.json','model/model-2/model.h5')
-    gold2.pred(prev_high_open)
+    gold2.pred(prev_open_low)
+
+    gold3.load_data('data/3/data.csv')
+    gold3.data_preprocessing(['Date','Action','Change','Open','High','Low','Close'])
+    gold3.load_model('model/model-3/model.json','model/model-3/model.h5')
+    gold3.pred(prev_high_plus_low)
 
     # search in search engine
     # urls 
